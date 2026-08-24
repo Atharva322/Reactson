@@ -70,14 +70,17 @@ Implemented:
 - MCTS selection, expansion, rollout, reward evaluation, backpropagation, and root action selection
 - Deterministic random seed support
 - Tree serialization
+- `ReActPlanner` baseline
+- Deterministic heuristic critic with repetition and invalid-action penalties
+- Planning budget clamping
+- Repeated-action metadata
+- Controlled benchmark helper and test showing MCTS can beat a prior-only baseline
 
 Remaining:
 
-- `ReActPlanner` baseline
-- Critic object integration beyond environment reward hooks
 - Broader cycle/repeated-action detection
-- Planning budget and timeout policy
-- Controlled benchmark comparing MCTS to naive/random baselines
+- Timeout policy
+- Larger benchmark comparing Linear vs ReAct vs MCTS over multiple tasks
 
 ## Phase 3: Execution, Tool Registry and MCP Synthesis
 

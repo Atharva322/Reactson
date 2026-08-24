@@ -21,7 +21,7 @@ Phase 1 progress check:
 
 Phase 2 progress check:
 
-- `pytest -q`: pass, 16 tests passed after adding planning abstractions, the linear baseline, and MCTS toy-search tests.
+- `pytest -q`: pass, 20 tests passed after adding ReAct, critic, budget, and benchmark coverage.
 
 Notes:
 

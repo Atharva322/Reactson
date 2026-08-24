@@ -14,7 +14,7 @@ The project is being built phase by phase from the architecture and implementati
 
 ## Current Status
 
-Phase 0 and Phase 1 are complete for the local deterministic baseline. Phase 2 is in progress with a pluggable planning interface, linear baseline, and initial complete MCTS loop.
+Phase 0 and Phase 1 are complete for the local deterministic baseline. Phase 2 is in progress with a pluggable planning interface, linear/ReAct baselines, a heuristic critic, and an initial complete MCTS loop.
 
 ## Quick Start
 
