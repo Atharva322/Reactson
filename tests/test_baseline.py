@@ -49,5 +49,6 @@ def test_phase_tracker_lists_all_roadmap_phases() -> None:
     assert [phase.index for phase in PHASES] == list(range(7))
     assert PHASES[0].status == "completed"
     assert PHASES[1].status == "completed"
-    assert PHASES[2].status == "in_progress"
+    assert PHASES[2].status == "completed"
+    assert PHASES[3].status == "in_progress"
     assert PHASES[-1].name == "Evaluation, Reliability and Release Hardening"

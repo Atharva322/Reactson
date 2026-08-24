@@ -57,7 +57,7 @@ Remaining:
 
 ## Phase 2: Planning Framework and Complete MCTS
 
-Status: in progress
+Status: completed
 
 Build `PlanningStrategy`, Linear, ReAct, MCTS node models, UCT selection, expansion, rollout, critic integration, backpropagation, budgets, cycle detection, and tree inspection.
 
@@ -84,9 +84,26 @@ Remaining:
 
 ## Phase 3: Execution, Tool Registry and MCP Synthesis
 
-Status: pending
+Status: in progress
 
 Separate planning from side effects with typed actions, executor, registry, router, capability gaps, sandbox validation, permissions, critic scoring, retry policy, and memory ingestion.
+
+Implemented:
+
+- Typed `Action` and `ExecutionResult`
+- Executor boundary for registered tool execution
+- Tool definition model
+- In-memory tool registry
+- Capability router with explicit `CapabilityGap`
+- Permission/health checks before tool execution
+- Execution critic with success, latency, and side-effect signals
+
+Remaining:
+
+- MCP synthesizer
+- Sandbox validation pipeline
+- Retry/recovery policy
+- Tool-result memory ingestion
 
 ## Phase 4: Kernel, API, Persistence and Observability
 

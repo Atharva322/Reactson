@@ -23,6 +23,10 @@ Phase 2 progress check:
 
 - `pytest -q`: pass, 20 tests passed after adding ReAct, critic, budget, and benchmark coverage.
 
+Phase 3 progress check:
+
+- `pytest -q`: pass, 28 tests passed after adding execution and tool registry contracts.
+
 Notes:
 
 - Pytest emitted cache-write warnings in the restricted sandbox, but test execution completed successfully.
