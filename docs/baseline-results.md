@@ -19,6 +19,10 @@ Phase 1 progress check:
 
 - `pytest -q`: pass, 12 tests passed after adding memory store interfaces, deterministic stores, graph/vector adapter contracts, and context-routing coverage.
 
+Phase 2 progress check:
+
+- `pytest -q`: pass, 16 tests passed after adding planning abstractions, the linear baseline, and MCTS toy-search tests.
+
 Notes:
 
 - Pytest emitted cache-write warnings in the restricted sandbox, but test execution completed successfully.

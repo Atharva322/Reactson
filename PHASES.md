@@ -31,7 +31,7 @@ Remaining:
 
 ## Phase 1: Epistemic Memory Foundation
 
-Status: in progress
+Status: completed
 
 Build typed memory models, deterministic embedding wrapper, ingestion, retrieval, graph traversal, context routing, deduplication, and memory tests.
 
@@ -52,14 +52,32 @@ Implemented:
 
 Remaining:
 
-- External embedding provider wrapper
-- Integration tests against controlled graph/vector fixtures
+- External embedding provider wrapper before production memory backends are enabled
+- Live Neo4j/Qdrant integration tests once local services are available
 
 ## Phase 2: Planning Framework and Complete MCTS
 
-Status: pending
+Status: in progress
 
 Build `PlanningStrategy`, Linear, ReAct, MCTS node models, UCT selection, expansion, rollout, critic integration, backpropagation, budgets, cycle detection, and tree inspection.
+
+Implemented:
+
+- `PlanningStrategy` interface
+- Typed planning request/result/transition/action models
+- `LinearPlanner` baseline
+- MCTS node model
+- MCTS selection, expansion, rollout, reward evaluation, backpropagation, and root action selection
+- Deterministic random seed support
+- Tree serialization
+
+Remaining:
+
+- `ReActPlanner` baseline
+- Critic object integration beyond environment reward hooks
+- Broader cycle/repeated-action detection
+- Planning budget and timeout policy
+- Controlled benchmark comparing MCTS to naive/random baselines
 
 ## Phase 3: Execution, Tool Registry and MCP Synthesis
 
