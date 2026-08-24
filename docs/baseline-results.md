@@ -15,6 +15,10 @@ Gate results:
 - `python -m reactson.cli health`: pass, returned Reactson health JSON.
 - `pytest`: pass, 5 tests passed.
 
+Phase 1 progress check:
+
+- `pytest -q`: pass, 12 tests passed after adding memory store interfaces, deterministic stores, graph/vector adapter contracts, and context-routing coverage.
+
 Notes:
 
 - Pytest emitted cache-write warnings in the restricted sandbox, but test execution completed successfully.

@@ -47,6 +47,26 @@ def test_graph_neighbors_are_retrieved_for_active_entities() -> None:
     assert "Action -[PRODUCED]-> Observation" in context[0].text
 
 
+def test_graph_traversal_supports_depth_greater_than_one() -> None:
+    engine = EpistemicEngine()
+    engine.remember_fact(GraphTriple(task_id="task-a", source="Task", relation="HAS_HYPOTHESIS", target="Hypothesis"))
+    engine.remember_fact(GraphTriple(task_id="task-a", source="Hypothesis", relation="SUPPORTED_BY", target="Evidence"))
+
+    context = engine.retrieve_context(
+        task_id="task-a",
+        query="evidence",
+        entities=("Task",),
+        recent_limit=0,
+        semantic_limit=0,
+        graph_depth=2,
+    )
+
+    assert [item.text for item in context] == [
+        "Task -[HAS_HYPOTHESIS]-> Hypothesis",
+        "Hypothesis -[SUPPORTED_BY]-> Evidence",
+    ]
+
+
 def test_context_router_deduplicates_and_respects_budget() -> None:
     router = ContextRouter(token_budget=5)
     first = ExecutionMemory(task_id="task-a", text="alpha beta").text

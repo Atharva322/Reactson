@@ -14,7 +14,7 @@ The project is being built phase by phase from the architecture and implementati
 
 ## Current Status
 
-Phase 0 is complete. Phase 1 is in progress with deterministic in-memory memory stores, typed models, ingestion, retrieval, graph traversal, context routing, and tests.
+Phase 0 is complete. Phase 1 is in progress with deterministic in-memory memory stores, typed models, ingestion, retrieval, graph traversal, context routing, Neo4j/Qdrant adapter contracts, and tests.
 
 ## Quick Start
 

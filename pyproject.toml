@@ -22,6 +22,7 @@ classifiers = [
 
 [project.optional-dependencies]
 api = ["fastapi>=0.110"]
+memory = ["neo4j>=5.20", "qdrant-client>=1.9"]
 dev = ["pytest>=8"]
 
 [project.scripts]

@@ -44,12 +44,14 @@ Implemented:
 - Memory ingestion pipeline
 - Context router with deduplication and token-budget policy
 - High-level `EpistemicEngine`
+- Store protocols for graph/vector backend adapters
+- Neo4j graph adapter with schema validation hook
+- Qdrant vector adapter with collection validation hook
 - Unit tests for deterministic embeddings, task-scoped retrieval, graph neighbors, and context routing
+- Adapter contract tests with fake clients
 
 Remaining:
 
-- Neo4j adapter and schema validation
-- Qdrant adapter and collection validation
 - External embedding provider wrapper
 - Integration tests against controlled graph/vector fixtures
 

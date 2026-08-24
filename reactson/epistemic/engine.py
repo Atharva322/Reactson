@@ -6,20 +6,27 @@ from reactson.epistemic.context_router import ContextRouter
 from reactson.epistemic.graph_store import InMemoryGraphStore
 from reactson.epistemic.ingestion import MemoryIngestionPipeline
 from reactson.epistemic.models import ContextItem, ExecutionMemory, GraphTriple
+from reactson.epistemic.stores import GraphStore, VectorStore
 from reactson.epistemic.vector_store import InMemoryVectorStore
 
 
 class EpistemicEngine:
     def __init__(
         self,
-        graph_store: InMemoryGraphStore | None = None,
-        vector_store: InMemoryVectorStore | None = None,
+        graph_store: GraphStore | None = None,
+        vector_store: VectorStore | None = None,
         context_router: ContextRouter | None = None,
     ) -> None:
         self.graph_store = graph_store or InMemoryGraphStore()
         self.vector_store = vector_store or InMemoryVectorStore()
         self.context_router = context_router or ContextRouter()
         self.ingestion = MemoryIngestionPipeline(self.graph_store, self.vector_store)
+
+    def validate_backends(self) -> dict[str, bool]:
+        return {
+            "graph": self.graph_store.validate_schema(),
+            "vector": self.vector_store.validate_collection(),
+        }
 
     def remember_episode(self, memory: ExecutionMemory) -> ExecutionMemory:
         return self.ingestion.ingest_episode(memory)
