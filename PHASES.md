@@ -153,12 +153,13 @@ Implemented:
 - Structured `Evidence`, `Observation`, `Hypothesis`, and `DiagnosisReport` models
 - Repository diagnosis agent with evidence-backed summary
 - Tests for safe search and diagnosis reporting
+- Safe allowlisted test runner abstraction
+- Test output parser into evidence
+- Diagnosis session tracker for multi-step evidence/hypotheses
+- Failure-memory reuse from `EpistemicEngine`
 
 Remaining:
 
-- Safe test runner
-- Hypothesis tracking over multiple execution steps
-- Failure-memory reuse
 - Optional patch proposal generation without automatic destructive writes
 
 ## Phase 6: Evaluation, Reliability and Release Hardening

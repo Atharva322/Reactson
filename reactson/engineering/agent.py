@@ -4,27 +4,49 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from reactson.engineering.tracker import DiagnosisSession
+from reactson.engineering.test_runner import SafeTestRunner
+from reactson.epistemic.engine import EpistemicEngine
 from reactson.engineering.models import DiagnosisReport, Evidence, Hypothesis, Observation
 from reactson.engineering.repository import RepositoryTools
 
 
 class RepositoryDiagnosisAgent:
-    def __init__(self, tools: RepositoryTools) -> None:
+    def __init__(
+        self,
+        tools: RepositoryTools,
+        test_runner: SafeTestRunner | None = None,
+        memory: EpistemicEngine | None = None,
+        task_id: str | None = None,
+    ) -> None:
         self.tools = tools
+        self.test_runner = test_runner
+        self.memory = memory
+        self.task_id = task_id
+        self.session = DiagnosisSession()
 
     @classmethod
     def from_path(cls, root: str | Path) -> "RepositoryDiagnosisAgent":
         return cls(RepositoryTools(root))
 
-    def diagnose(self, objective: str) -> DiagnosisReport:
+    def diagnose(self, objective: str, run_tests: bool = False) -> DiagnosisReport:
         evidence = list(self.tools.collect_failure_files())
         evidence.extend(self.tools.search("failed", "*.py"))
         evidence.extend(self.tools.search("error", "*.py"))
         evidence.extend(self.tools.search("ImportError", "*.py"))
         evidence.extend(self.tools.search("AssertionError", "*.py"))
+        evidence.extend(self._memory_evidence(objective))
 
-        observations = self._observations(tuple(evidence))
-        hypotheses = self._hypotheses(tuple(evidence))
+        test_result = None
+        if run_tests and self.test_runner is not None:
+            test_result = self.test_runner.run()
+            evidence.extend(test_result.evidence())
+
+        self.session.add_evidence(tuple(evidence))
+        observations = self._observations(tuple(self.session.evidence))
+        self.session.add_observations(observations)
+        hypotheses = self._hypotheses(tuple(self.session.evidence))
+        self.session.set_hypotheses(hypotheses)
         summary = self._summary(objective, hypotheses)
 
         return DiagnosisReport(
@@ -32,13 +54,17 @@ class RepositoryDiagnosisAgent:
             summary=summary,
             observations=observations,
             hypotheses=hypotheses,
-            evidence=tuple(evidence),
+            evidence=tuple(self.session.evidence),
             recommended_next_steps=(
                 "Run the smallest failing test target first.",
                 "Inspect the highest-confidence hypothesis evidence before patching.",
                 "Add a regression test once the root cause is fixed.",
             ),
-            metadata={"agent": "repository_diagnosis", "evidence_count": len(evidence)},
+            metadata={
+                "agent": "repository_diagnosis",
+                "evidence_count": len(self.session.evidence),
+                "test_exit_code": test_result.exit_code if test_result else None,
+            },
         )
 
     def _observations(self, evidence: tuple[Evidence, ...]) -> tuple[Observation, ...]:
@@ -88,6 +114,12 @@ class RepositoryDiagnosisAgent:
                 )
             )
         return tuple(hypotheses)
+
+    def _memory_evidence(self, objective: str) -> tuple[Evidence, ...]:
+        if self.memory is None or self.task_id is None:
+            return ()
+        context = self.memory.retrieve_context(task_id=self.task_id, query=objective, recent_limit=3)
+        return tuple(Evidence(source="failure_memory", detail=item.text) for item in context)
 
     def _summary(self, objective: str, hypotheses: tuple[Hypothesis, ...]) -> str:
         top = max(hypotheses, key=lambda item: item.confidence)
