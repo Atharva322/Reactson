@@ -41,7 +41,7 @@ class JsonTaskStore:
         sessions: list[TaskSession] = []
         for path in sorted(self.root.glob("*/session.json")):
             sessions.append(TaskSession.from_dict(json.loads(path.read_text(encoding="utf-8"))))
-        return sessions
+        return sorted(sessions, key=lambda session: (session.created_at, session.task_id))
 
     def exists(self, task_id: str) -> bool:
         return self._session_path(task_id).exists()
