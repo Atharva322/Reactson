@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 from uuid import uuid4
 
 from reactson.api.routes import TaskRoutes
@@ -112,6 +113,45 @@ def test_routes_expose_health_readiness_and_filtered_events() -> None:
     assert routes.health()["kernel"] == "ok"
     assert routes.readiness() == {"ready": True, "persistence": True}
     assert routes.events(created["task_id"], event_type="task.completed")[0]["type"] == "task.completed"
+
+
+def test_kernel_lists_persisted_tasks_across_restart() -> None:
+    root = _workspace_tmp()
+    first_kernel = KernelRuntime(JsonTaskStore(root))
+    first_kernel.create_task("first")
+    second = first_kernel.create_task("second")
+
+    second_kernel = KernelRuntime(JsonTaskStore(root))
+    listed = second_kernel.list_tasks()
+
+    assert [session.objective for session in listed] == ["first", "second"]
+    assert second_kernel.get_task(second.task_id).objective == "second"
+
+
+def test_event_cursor_and_jsonl_stream() -> None:
+    kernel = KernelRuntime(JsonTaskStore(_workspace_tmp()))
+    created = kernel.create_task("stream events")
+    first_event = kernel.events(created.task_id)[0]
+    kernel.run_task(created.task_id)
+
+    after_first = kernel.events(created.task_id, after_event_id=first_event.event_id)
+    stream_lines = kernel.event_stream(created.task_id, after_event_id=first_event.event_id).splitlines()
+
+    assert after_first[0].type == "task.planning"
+    assert json.loads(stream_lines[0])["type"] == "task.planning"
+    assert json.loads(stream_lines[-1])["type"] == "task.completed"
+
+
+def test_routes_list_tasks_and_stream_events() -> None:
+    routes = TaskRoutes(KernelRuntime(JsonTaskStore(_workspace_tmp())))
+    created = routes.create_task(CreateTaskRequest(objective="listed"))
+    routes.run_task(created["task_id"])
+
+    listed = routes.list_tasks()
+    stream = routes.event_stream(created["task_id"])
+
+    assert listed[0]["objective"] == "listed"
+    assert "task.completed" in stream
 
 
 def _workspace_tmp() -> Path:

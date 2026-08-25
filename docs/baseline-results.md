@@ -30,6 +30,7 @@ Phase 3 progress check:
 Phase 4 progress check:
 
 - `pytest -q`: pass, 41 tests passed after adding metrics, tracing, readiness, event filtering, and budget handling.
+- `pytest -q`: pass, 44 tests passed after completing task listing, event cursors, JSONL streams, and persistence readiness.
 
 Notes:
 

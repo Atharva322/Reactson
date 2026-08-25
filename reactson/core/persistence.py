@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from uuid import uuid4
 
 from reactson.core.events import TaskEvent
 from reactson.core.session import TaskSession
@@ -36,8 +37,21 @@ class JsonTaskStore:
             return []
         return [TaskEvent.from_dict(payload) for payload in json.loads(path.read_text(encoding="utf-8"))]
 
+    def list_sessions(self) -> list[TaskSession]:
+        sessions: list[TaskSession] = []
+        for path in sorted(self.root.glob("*/session.json")):
+            sessions.append(TaskSession.from_dict(json.loads(path.read_text(encoding="utf-8"))))
+        return sessions
+
     def exists(self, task_id: str) -> bool:
         return self._session_path(task_id).exists()
+
+    def readiness(self) -> bool:
+        probe = self.root / f".readiness-{uuid4()}.tmp"
+        probe.write_text("ok", encoding="utf-8")
+        ok = probe.read_text(encoding="utf-8") == "ok"
+        probe.unlink(missing_ok=True)
+        return ok
 
     def _task_dir(self, task_id: str) -> Path:
         return self.root / task_id

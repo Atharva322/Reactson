@@ -5,6 +5,7 @@ from __future__ import annotations
 from reactson.core.events import TaskEvent
 from reactson.core.persistence import JsonTaskStore
 from reactson.core.session import TaskSession, TaskStatus
+from reactson.core.streaming import events_to_jsonl
 from reactson.observability.metrics import MetricsRegistry
 from reactson.observability.tracing import Tracer
 
@@ -29,6 +30,9 @@ class KernelRuntime:
 
     def get_task(self, task_id: str) -> TaskSession:
         return self.store.load_session(task_id)
+
+    def list_tasks(self) -> list[TaskSession]:
+        return self.store.list_sessions()
 
     def run_task(self, task_id: str, budget: int | None = None) -> TaskSession:
         session = self.store.load_session(task_id)
@@ -70,11 +74,23 @@ class KernelRuntime:
             self._record(session, "task.cancelled", "Task cancelled")
         return session
 
-    def events(self, task_id: str, event_type: str | None = None) -> list[TaskEvent]:
+    def events(
+        self,
+        task_id: str,
+        event_type: str | None = None,
+        after_event_id: str | None = None,
+    ) -> list[TaskEvent]:
         events = self.store.load_events(task_id)
+        if after_event_id is not None:
+            event_ids = [event.event_id for event in events]
+            if after_event_id in event_ids:
+                events = events[event_ids.index(after_event_id) + 1 :]
         if event_type is None:
             return events
         return [event for event in events if event.type == event_type]
+
+    def event_stream(self, task_id: str, after_event_id: str | None = None) -> str:
+        return events_to_jsonl(self.events(task_id, after_event_id=after_event_id))
 
     def tree(self, task_id: str) -> dict:
         session = self.store.load_session(task_id)
@@ -88,7 +104,8 @@ class KernelRuntime:
         return {"kernel": "ok", "persistence": "ok", "metrics": self.metrics.snapshot()}
 
     def readiness(self) -> dict[str, bool]:
-        return {"ready": True, "persistence": True}
+        persistence_ready = self.store.readiness()
+        return {"ready": persistence_ready, "persistence": persistence_ready}
 
     def _record(self, session: TaskSession, event_type: str, message: str) -> None:
         span = self.tracer.start_span(event_type, session.trace_id, attributes={"task_id": session.task_id})

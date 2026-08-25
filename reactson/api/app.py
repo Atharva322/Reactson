@@ -52,6 +52,10 @@ def create_app(kernel: KernelRuntime | None = None) -> Any:
     def create_task(body: CreateTaskBody) -> dict[str, Any]:
         return routes.create_task(CreateTaskRequest(objective=body.objective, metadata=body.metadata))
 
+    @app.get("/v1/tasks")
+    def list_tasks() -> list[dict[str, Any]]:
+        return routes.list_tasks()
+
     @app.get("/v1/tasks/{task_id}")
     def get_task(task_id: str) -> dict[str, Any]:
         return routes.get_task(task_id)
@@ -65,8 +69,16 @@ def create_app(kernel: KernelRuntime | None = None) -> Any:
         return routes.cancel_task(task_id)
 
     @app.get("/v1/tasks/{task_id}/events")
-    def task_events(task_id: str, event_type: str | None = None) -> list[dict[str, Any]]:
-        return routes.events(task_id, event_type=event_type)
+    def task_events(
+        task_id: str,
+        event_type: str | None = None,
+        after_event_id: str | None = None,
+    ) -> list[dict[str, Any]]:
+        return routes.events(task_id, event_type=event_type, after_event_id=after_event_id)
+
+    @app.get("/v1/tasks/{task_id}/events/stream")
+    def task_event_stream(task_id: str, after_event_id: str | None = None) -> str:
+        return routes.event_stream(task_id, after_event_id=after_event_id)
 
     @app.get("/v1/tasks/{task_id}/tree")
     def task_tree(task_id: str) -> dict[str, Any]:

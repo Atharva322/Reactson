@@ -110,7 +110,7 @@ Remaining:
 
 ## Phase 4: Kernel, API, Persistence and Observability
 
-Status: in progress
+Status: completed
 
 Add task/session state machine, resumable state, FastAPI routes, events, cancellation, budget handling, traces, metrics, probes, and integration stack.
 
@@ -128,13 +128,16 @@ Implemented:
 - Kernel health/readiness details
 - Budget halt behavior
 - Event filtering
+- Persisted task listing for restart/resume inspection
+- Cursor-based event polling
+- JSONL event stream helper
+- Persistence readiness probe
 
 Remaining:
 
 - OpenTelemetry exporter integration
-- Async event streaming transport
-- Readiness probes beyond health payload
-- Restart/resume integration stack
+- Async event streaming transport beyond JSONL helper
+- Multi-process integration stack
 
 ## Phase 5: Real-World Engineering Agent
 

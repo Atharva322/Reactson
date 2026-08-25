@@ -15,6 +15,9 @@ class TaskRoutes:
     def create_task(self, request: CreateTaskRequest) -> dict[str, Any]:
         return task_payload(self.kernel.create_task(request.objective, metadata=request.metadata))
 
+    def list_tasks(self) -> list[dict[str, Any]]:
+        return [task_payload(session) for session in self.kernel.list_tasks()]
+
     def get_task(self, task_id: str) -> dict[str, Any]:
         return task_payload(self.kernel.get_task(task_id))
 
@@ -25,8 +28,19 @@ class TaskRoutes:
     def cancel_task(self, task_id: str) -> dict[str, Any]:
         return task_payload(self.kernel.cancel_task(task_id))
 
-    def events(self, task_id: str, event_type: str | None = None) -> list[dict[str, Any]]:
-        return [event_payload(event) for event in self.kernel.events(task_id, event_type=event_type)]
+    def events(
+        self,
+        task_id: str,
+        event_type: str | None = None,
+        after_event_id: str | None = None,
+    ) -> list[dict[str, Any]]:
+        return [
+            event_payload(event)
+            for event in self.kernel.events(task_id, event_type=event_type, after_event_id=after_event_id)
+        ]
+
+    def event_stream(self, task_id: str, after_event_id: str | None = None) -> str:
+        return self.kernel.event_stream(task_id, after_event_id=after_event_id)
 
     def tree(self, task_id: str) -> dict[str, Any]:
         return self.kernel.tree(task_id)
