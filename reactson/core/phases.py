@@ -19,5 +19,5 @@ PHASES: tuple[Phase, ...] = (
     Phase(3, "Execution, Tool Registry and MCP Synthesis", "completed"),
     Phase(4, "Kernel, API, Persistence and Observability", "completed"),
     Phase(5, "Real-World Engineering Agent", "completed"),
-    Phase(6, "Evaluation, Reliability and Release Hardening", "pending"),
+    Phase(6, "Evaluation, Reliability and Release Hardening", "in_progress"),
 )

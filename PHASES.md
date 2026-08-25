@@ -166,6 +166,23 @@ Remaining:
 
 ## Phase 6: Evaluation, Reliability and Release Hardening
 
-Status: pending
+Status: in progress
 
 Add benchmark datasets, planner comparison reports, regression thresholds, security tests, load tests, documentation verification, and release checklist.
+
+Implemented:
+
+- Benchmark task model
+- Controlled planner-trap dataset
+- Same-task EvaluationRunner for Linear/ReAct/MCTS
+- Planner metric aggregation
+- JSON and HTML report rendering
+- Regression threshold checks
+- Evaluation smoke tests
+
+Remaining:
+
+- Security regression tests
+- Documentation verification
+- Release checklist
+- Larger offline benchmark dataset

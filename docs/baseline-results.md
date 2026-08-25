@@ -38,6 +38,10 @@ Phase 5 progress check:
 - `pytest -q`: pass, 49 tests passed after adding safe test runner, test-output evidence, hypothesis tracking, and memory reuse.
 - `pytest -q`: pass, 51 tests passed after adding final-answer synthesis and non-destructive patch proposals.
 
+Phase 6 progress check:
+
+- `pytest -q`: pass, 54 tests passed after adding evaluation runner, metrics, reports, and regression thresholds.
+
 Notes:
 
 - Pytest emitted cache-write warnings in the restricted sandbox, but test execution completed successfully.
