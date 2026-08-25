@@ -141,7 +141,7 @@ Remaining:
 
 ## Phase 5: Real-World Engineering Agent
 
-Status: in progress
+Status: completed
 
 Demonstrate repository diagnosis/debugging with safe repo tools, structured observations, hypotheses, evidence, and final answer synthesis.
 
@@ -157,10 +157,12 @@ Implemented:
 - Test output parser into evidence
 - Diagnosis session tracker for multi-step evidence/hypotheses
 - Failure-memory reuse from `EpistemicEngine`
+- Evidence-backed final answer synthesis
+- Non-destructive patch proposal artifact
 
 Remaining:
 
-- Optional patch proposal generation without automatic destructive writes
+- Curated repository-debugging benchmark beyond unit fixtures
 
 ## Phase 6: Evaluation, Reliability and Release Hardening
 

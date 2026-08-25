@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from uuid import uuid4
 
-from reactson.engineering import RepositoryDiagnosisAgent, RepositoryTools, SafeTestRunner
+from reactson.engineering import PatchProposalGenerator, RepositoryDiagnosisAgent, RepositoryTools, SafeTestRunner
 from reactson.epistemic import EpistemicEngine, ExecutionMemory
 
 
@@ -82,6 +82,33 @@ def test_agent_uses_test_output_and_failure_memory() -> None:
     assert any(item.source == "failure_memory" for item in report.evidence)
     assert any(item.source == "test_output" for item in report.evidence)
     assert report.hypotheses[0].confidence >= 0.75
+
+
+def test_report_final_answer_is_evidence_backed() -> None:
+    root = _workspace_tmp()
+    (root / "tests").mkdir()
+    (root / "tests" / "test_imports.py").write_text("raise ImportError('bad dependency')\n", encoding="utf-8")
+
+    report = RepositoryDiagnosisAgent.from_path(root).diagnose("Explain failure")
+    answer = report.final_answer()
+
+    assert "Top hypothesis" in answer
+    assert "Evidence:" in answer
+    assert "tests/test_imports.py" in answer
+
+
+def test_patch_proposal_is_non_destructive() -> None:
+    root = _workspace_tmp()
+    (root / "tests").mkdir()
+    (root / "tests" / "test_imports.py").write_text("raise ImportError('bad dependency')\n", encoding="utf-8")
+
+    report = RepositoryDiagnosisAgent.from_path(root).diagnose("Suggest patch")
+    proposal = PatchProposalGenerator().propose(report)
+
+    assert proposal.destructive is False
+    assert proposal.suggestions
+    assert proposal.suggestions[0].path == "tests/test_imports.py"
+    assert "dependency" in proposal.suggestions[0].proposed_change.lower()
 
 
 def _workspace_tmp() -> Path:
