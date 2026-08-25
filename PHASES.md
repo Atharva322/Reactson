@@ -123,11 +123,16 @@ Implemented:
 - API route handler contracts
 - FastAPI route registration for Phase 4 endpoints
 - Lifecycle and persistence tests
+- In-memory metrics registry
+- Lightweight tracing spans attached to task events
+- Kernel health/readiness details
+- Budget halt behavior
+- Event filtering
 
 Remaining:
 
-- Metrics and OpenTelemetry spans
-- Async event streaming
+- OpenTelemetry exporter integration
+- Async event streaming transport
 - Readiness probes beyond health payload
 - Restart/resume integration stack
 

@@ -25,8 +25,14 @@ class TaskRoutes:
     def cancel_task(self, task_id: str) -> dict[str, Any]:
         return task_payload(self.kernel.cancel_task(task_id))
 
-    def events(self, task_id: str) -> list[dict[str, Any]]:
-        return [event_payload(event) for event in self.kernel.events(task_id)]
+    def events(self, task_id: str, event_type: str | None = None) -> list[dict[str, Any]]:
+        return [event_payload(event) for event in self.kernel.events(task_id, event_type=event_type)]
 
     def tree(self, task_id: str) -> dict[str, Any]:
         return self.kernel.tree(task_id)
+
+    def health(self) -> dict[str, Any]:
+        return self.kernel.health()
+
+    def readiness(self) -> dict[str, Any]:
+        return self.kernel.readiness()

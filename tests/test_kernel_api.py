@@ -69,6 +69,51 @@ def test_task_routes_wrap_kernel_contracts() -> None:
     assert tree["task_id"] == created["task_id"]
 
 
+def test_kernel_records_metrics_and_trace_spans() -> None:
+    kernel = KernelRuntime(JsonTaskStore(_workspace_tmp()))
+    created = kernel.create_task("observe me")
+    kernel.run_task(created.task_id)
+
+    health = kernel.health()
+    events = kernel.events(created.task_id)
+
+    assert health["metrics"]["counters"]["tasks_created"] == 1.0
+    assert health["metrics"]["counters"]["tasks_completed"] == 1.0
+    assert events[0].metadata["span"]["trace_id"] == created.trace_id
+    assert events[0].metadata["span"]["name"] == "task.created"
+
+
+def test_kernel_halts_when_budget_is_exhausted() -> None:
+    kernel = KernelRuntime(JsonTaskStore(_workspace_tmp()))
+    created = kernel.create_task("budget stop")
+
+    halted = kernel.run_task(created.task_id, budget=0)
+
+    assert halted.status == TaskStatus.HALTED
+    assert kernel.events(created.task_id)[-1].type == "task.halted"
+    assert kernel.health()["metrics"]["counters"]["tasks_halted"] == 1.0
+
+
+def test_events_can_be_filtered_by_type() -> None:
+    kernel = KernelRuntime(JsonTaskStore(_workspace_tmp()))
+    created = kernel.create_task("filter events")
+    kernel.run_task(created.task_id)
+
+    completed_events = kernel.events(created.task_id, event_type="task.completed")
+
+    assert [event.type for event in completed_events] == ["task.completed"]
+
+
+def test_routes_expose_health_readiness_and_filtered_events() -> None:
+    routes = TaskRoutes(KernelRuntime(JsonTaskStore(_workspace_tmp())))
+    created = routes.create_task(CreateTaskRequest(objective="route health"))
+    routes.run_task(created["task_id"])
+
+    assert routes.health()["kernel"] == "ok"
+    assert routes.readiness() == {"ready": True, "persistence": True}
+    assert routes.events(created["task_id"], event_type="task.completed")[0]["type"] == "task.completed"
+
+
 def _workspace_tmp() -> Path:
     root = Path(".test-artifacts") / str(uuid4())
     root.mkdir(parents=True, exist_ok=True)

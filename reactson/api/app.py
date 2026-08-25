@@ -40,7 +40,13 @@ def create_app(kernel: KernelRuntime | None = None) -> Any:
 
     @app.get("/v1/health")
     def health() -> dict[str, Any]:
-        return health_payload()
+        payload = health_payload()
+        payload.update(routes.health())
+        return payload
+
+    @app.get("/v1/ready")
+    def readiness() -> dict[str, Any]:
+        return routes.readiness()
 
     @app.post("/v1/tasks")
     def create_task(body: CreateTaskBody) -> dict[str, Any]:
@@ -59,8 +65,8 @@ def create_app(kernel: KernelRuntime | None = None) -> Any:
         return routes.cancel_task(task_id)
 
     @app.get("/v1/tasks/{task_id}/events")
-    def task_events(task_id: str) -> list[dict[str, Any]]:
-        return routes.events(task_id)
+    def task_events(task_id: str, event_type: str | None = None) -> list[dict[str, Any]]:
+        return routes.events(task_id, event_type=event_type)
 
     @app.get("/v1/tasks/{task_id}/tree")
     def task_tree(task_id: str) -> dict[str, Any]:

@@ -29,7 +29,7 @@ Phase 3 progress check:
 
 Phase 4 progress check:
 
-- `pytest -q`: pass, 37 tests passed after adding kernel, persistence, event, and API route contracts.
+- `pytest -q`: pass, 41 tests passed after adding metrics, tracing, readiness, event filtering, and budget handling.
 
 Notes:
 
