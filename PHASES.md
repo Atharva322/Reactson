@@ -166,7 +166,7 @@ Remaining:
 
 ## Phase 6: Evaluation, Reliability and Release Hardening
 
-Status: in progress
+Status: completed
 
 Add benchmark datasets, planner comparison reports, regression thresholds, security tests, load tests, documentation verification, and release checklist.
 
@@ -179,10 +179,11 @@ Implemented:
 - JSON and HTML report rendering
 - Regression threshold checks
 - Evaluation smoke tests
+- Security regression checks for sandbox and safe runner
+- Documentation verification
+- Release checklist helper
+- Larger deterministic planner benchmark fixture
 
 Remaining:
 
-- Security regression tests
-- Documentation verification
-- Release checklist
 - Larger offline benchmark dataset

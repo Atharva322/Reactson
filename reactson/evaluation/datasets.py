@@ -74,4 +74,28 @@ def default_planner_dataset() -> tuple[BenchmarkTask, ...]:
             expected_action="boring_good",
             environment=PlannerTrapEnvironment(),
         ),
+        BenchmarkTask(
+            task_id="planner-trap-2",
+            name="Renamed prior trap",
+            start_state="start",
+            expected_action="stable_path",
+            environment=PlannerTrapEnvironment(
+                good_action="stable_path",
+                bad_action="flashy_failure",
+                good_prior=0.0,
+                bad_prior=0.9,
+            ),
+        ),
+        BenchmarkTask(
+            task_id="planner-trap-3",
+            name="Low-prior recovery",
+            start_state="start",
+            expected_action="long_term_fix",
+            environment=PlannerTrapEnvironment(
+                good_action="long_term_fix",
+                bad_action="quick_guess",
+                good_prior=0.1,
+                bad_prior=0.8,
+            ),
+        ),
     )

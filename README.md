@@ -14,7 +14,7 @@ The project is being built phase by phase from the architecture and implementati
 
 ## Current Status
 
-Phases 0 through 5 are complete for the local deterministic baseline. Phase 6 is in progress with planner evaluation, reports, and regression thresholds.
+Phases 0 through 6 are complete for the local deterministic baseline.
 
 ## Quick Start
 
