@@ -14,7 +14,7 @@ The project is being built phase by phase from the architecture and implementati
 
 ## Current Status
 
-Phase 0, Phase 1, and the local deterministic Phase 2 baseline are complete. Phase 3 is in progress with typed execution, tool registry/routing, capability gaps, and execution critic contracts.
+Phases 0 through 3 are complete for the local deterministic baseline. The next phase is Kernel, API, Persistence and Observability.
 
 ## Quick Start
 

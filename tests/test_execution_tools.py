@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from reactson.execution import Action, ExecutionCritic, Executor
-from reactson.tools import CapabilityGap, ToolDefinition, ToolRegistry, ToolRouter
+from reactson.epistemic import EpistemicEngine
+from reactson.execution import Action, ExecutionCritic, Executor, RetryPolicy
+from reactson.tools import CapabilityGap, SandboxValidator, ToolDefinition, ToolRegistry, ToolRouter, ToolSynthesizer
 
 
 def test_tool_router_selects_registered_capability() -> None:
@@ -43,7 +44,9 @@ def test_executor_runs_registered_tool_and_reports_metadata() -> None:
 
     assert result.success is True
     assert result.output == "hello"
-    assert result.metadata == {"tool_name": "echo", "action_type": "tool"}
+    assert result.metadata["tool_name"] == "echo"
+    assert result.metadata["action_type"] == "tool"
+    assert result.metadata["attempt"] == 1
 
 
 def test_executor_rejects_unregistered_tool() -> None:
@@ -120,6 +123,74 @@ def test_registry_rejects_duplicate_tool_names() -> None:
         registry.register(_echo_tool())
 
 
+def test_synthesizer_creates_safe_demo_tool_from_capability_gap() -> None:
+    gap = CapabilityGap(capability="uppercase", reason="missing")
+    tool = ToolSynthesizer().synthesize(gap)
+    registry = ToolRegistry()
+    registry.register(tool)
+
+    result = Executor(registry).execute(Action(type="tool", tool_name=tool.name, arguments={"text": "hello"}))
+
+    assert result.success is True
+    assert result.output == "HELLO"
+    assert tool.metadata["synthetic"] is True
+
+
+def test_synthesizer_rejects_unapproved_capabilities() -> None:
+    with pytest.raises(ValueError):
+        ToolSynthesizer().synthesize(CapabilityGap(capability="host_shell", reason="missing"))
+
+
+def test_sandbox_rejects_blocked_side_effects() -> None:
+    tool = ToolDefinition(
+        name="unsafe",
+        description="Unsafe demo",
+        capabilities=("shell",),
+        schema={},
+        handler=lambda: None,
+        side_effects=("host_shell",),
+    )
+
+    validation = SandboxValidator().validate(tool)
+
+    assert validation.valid is False
+    assert validation.errors == ("blocked side effects: host_shell",)
+
+
+def test_executor_retries_transient_failures() -> None:
+    flaky = FlakyTool()
+    registry = ToolRegistry()
+    registry.register(
+        ToolDefinition(
+            name="flaky",
+            description="Flaky demo",
+            capabilities=("flaky",),
+            schema={},
+            handler=flaky,
+        )
+    )
+
+    result = Executor(registry, retry_policy=RetryPolicy(max_attempts=2)).execute(Action(type="tool", tool_name="flaky"))
+
+    assert result.success is True
+    assert result.output == "ok"
+    assert result.metadata["attempt"] == 2
+
+
+def test_executor_ingests_tool_result_memory() -> None:
+    memory = EpistemicEngine()
+    registry = ToolRegistry()
+    registry.register(_echo_tool())
+
+    result = Executor(registry, memory=memory, task_id="task-a").execute(
+        Action(type="tool", tool_name="echo", arguments={"text": "remember me"})
+    )
+    context = memory.retrieve_context(task_id="task-a", query="remember", recent_limit=5)
+
+    assert result.success is True
+    assert any("Tool echo succeeded" in item.text for item in context)
+
+
 def _echo_tool() -> ToolDefinition:
     return ToolDefinition(
         name="echo",
@@ -132,3 +203,14 @@ def _echo_tool() -> ToolDefinition:
 
 def _explode():
     raise RuntimeError("boom")
+
+
+class FlakyTool:
+    def __init__(self) -> None:
+        self.calls = 0
+
+    def __call__(self):
+        self.calls += 1
+        if self.calls == 1:
+            raise RuntimeError("transient failure")
+        return "ok"

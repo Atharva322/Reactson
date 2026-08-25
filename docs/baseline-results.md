@@ -25,7 +25,7 @@ Phase 2 progress check:
 
 Phase 3 progress check:
 
-- `pytest -q`: pass, 28 tests passed after adding execution and tool registry contracts.
+- `pytest -q`: pass, 33 tests passed after completing synthesizer, sandbox, retry, and memory-ingestion coverage.
 
 Notes:
 

@@ -84,7 +84,7 @@ Remaining:
 
 ## Phase 3: Execution, Tool Registry and MCP Synthesis
 
-Status: in progress
+Status: completed
 
 Separate planning from side effects with typed actions, executor, registry, router, capability gaps, sandbox validation, permissions, critic scoring, retry policy, and memory ingestion.
 
@@ -97,13 +97,16 @@ Implemented:
 - Capability router with explicit `CapabilityGap`
 - Permission/health checks before tool execution
 - Execution critic with success, latency, and side-effect signals
+- Deterministic safe demo tool synthesizer
+- Sandbox validation for generated/registered tool declarations
+- Retry policy for transient tool failures
+- Tool-result memory ingestion hook
 
 Remaining:
 
-- MCP synthesizer
-- Sandbox validation pipeline
-- Retry/recovery policy
-- Tool-result memory ingestion
+- Real MCP server generation
+- OS/process sandbox enforcement
+- Human approval hooks for destructive actions
 
 ## Phase 4: Kernel, API, Persistence and Observability
 
