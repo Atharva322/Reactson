@@ -141,9 +141,25 @@ Remaining:
 
 ## Phase 5: Real-World Engineering Agent
 
-Status: pending
+Status: in progress
 
 Demonstrate repository diagnosis/debugging with safe repo tools, structured observations, hypotheses, evidence, and final answer synthesis.
+
+Implemented:
+
+- Safe repository file listing
+- Case-insensitive code search
+- Failure/test file evidence collection
+- Structured `Evidence`, `Observation`, `Hypothesis`, and `DiagnosisReport` models
+- Repository diagnosis agent with evidence-backed summary
+- Tests for safe search and diagnosis reporting
+
+Remaining:
+
+- Safe test runner
+- Hypothesis tracking over multiple execution steps
+- Failure-memory reuse
+- Optional patch proposal generation without automatic destructive writes
 
 ## Phase 6: Evaluation, Reliability and Release Hardening
 
