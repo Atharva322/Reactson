@@ -27,6 +27,10 @@ Phase 3 progress check:
 
 - `pytest -q`: pass, 33 tests passed after completing synthesizer, sandbox, retry, and memory-ingestion coverage.
 
+Phase 4 progress check:
+
+- `pytest -q`: pass, 37 tests passed after adding kernel, persistence, event, and API route contracts.
+
 Notes:
 
 - Pytest emitted cache-write warnings in the restricted sandbox, but test execution completed successfully.

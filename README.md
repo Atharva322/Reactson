@@ -14,7 +14,7 @@ The project is being built phase by phase from the architecture and implementati
 
 ## Current Status
 
-Phases 0 through 3 are complete for the local deterministic baseline. The next phase is Kernel, API, Persistence and Observability.
+Phases 0 through 3 are complete for the local deterministic baseline. Phase 4 is in progress with kernel lifecycle, JSON persistence, structured events, and API route contracts.
 
 ## Quick Start
 

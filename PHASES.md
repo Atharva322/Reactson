@@ -110,9 +110,26 @@ Remaining:
 
 ## Phase 4: Kernel, API, Persistence and Observability
 
-Status: pending
+Status: in progress
 
 Add task/session state machine, resumable state, FastAPI routes, events, cancellation, budget handling, traces, metrics, probes, and integration stack.
+
+Implemented:
+
+- Task/session state machine
+- JSON persistence store
+- Structured task events with trace IDs
+- Kernel task create/run/cancel/get/events/tree operations
+- API route handler contracts
+- FastAPI route registration for Phase 4 endpoints
+- Lifecycle and persistence tests
+
+Remaining:
+
+- Metrics and OpenTelemetry spans
+- Async event streaming
+- Readiness probes beyond health payload
+- Restart/resume integration stack
 
 ## Phase 5: Real-World Engineering Agent
 
